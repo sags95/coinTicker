@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'coin_data.dart';
 import 'package:flutter/cupertino.dart';
+import 'dart:io' show Platform; // Shows only platform.dart
 
 class PriceScreen extends StatefulWidget {
   @override
@@ -10,7 +11,7 @@ class PriceScreen extends StatefulWidget {
 class _PriceScreenState extends State<PriceScreen> {
   String selectedCur = 'USD';
 
-  List<DropdownMenuItem<String>> menuItems() {
+  DropdownButton<String> androidDropdown() {
     List<DropdownMenuItem<String>> curList = [];
     var coinList = currenciesList.length;
     for (var i = 0; i < coinList; i++) {
@@ -21,18 +22,32 @@ class _PriceScreenState extends State<PriceScreen> {
       );
       curList.add(item);
     }
-    return curList;
+
+    return DropdownButton<String>(
+        value: selectedCur,
+        items: curList,
+        onChanged: (value) {
+          setState(() {
+            selectedCur = value;
+          });
+        });
   }
 
-  List<Widget> getPickerItems(){
+  CupertinoPicker iOSPicker() {
     List<Text> pickerList = [];
     var coinList = currenciesList.length;
-    for (var i = 0; i < coinList; i++){
+    for (var i = 0; i < coinList; i++) {
       String cur = currenciesList[i];
       var item = Text(cur);
       pickerList.add(item);
     }
-   return pickerList;
+    return CupertinoPicker(
+        backgroundColor: Colors.lightBlue, //match
+        itemExtent: 32,
+        onSelectedItemChanged: (selIndex) {
+          print(selIndex);
+        },
+        children: pickerList);
   }
 
   @override
@@ -67,31 +82,14 @@ class _PriceScreenState extends State<PriceScreen> {
             ),
           ),
           Container(
-            height: 150.0,
-            alignment: Alignment.center,
-            padding: EdgeInsets.only(bottom: 30.0),
-            color: Colors.lightBlue,
-            child: CupertinoPicker(
-                backgroundColor: Colors.lightBlue, //match
-                itemExtent: 32,
-                onSelectedItemChanged: (selIndex) {
-                  print(selIndex);
-                },
-                children: getPickerItems()
-            ),
+              height: 150.0,
+              alignment: Alignment.center,
+              padding: EdgeInsets.only(bottom: 30.0),
+              color: Colors.lightBlue,
+              child: Platform.isIOS ? iOSPicker() : androidDropdown() // Checks for OS and returns proper UI
           ),
         ],
       ),
     );
   }
 }
-
-//DropdownButton<String>(
-//value: selectedCur,
-//items: menuItems(),
-//onChanged: (value){
-//setState(() {
-//selectedCur = value;
-//});
-//},
-//),
