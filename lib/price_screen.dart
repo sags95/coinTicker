@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'coin_data.dart';
+import 'package:flutter/cupertino.dart';
 
 class PriceScreen extends StatefulWidget {
   @override
@@ -7,18 +8,31 @@ class PriceScreen extends StatefulWidget {
 }
 
 class _PriceScreenState extends State<PriceScreen> {
-
   String selectedCur = 'USD';
 
-  DropdownMenuItem<String> menuItems(){
+  List<DropdownMenuItem<String>> menuItems() {
+    List<DropdownMenuItem<String>> curList = [];
+    var coinList = currenciesList.length;
+    for (var i = 0; i < coinList; i++) {
+      String cur = currenciesList[i];
+      var item = DropdownMenuItem(
+        child: Text(cur),
+        value: cur,
+      );
+      curList.add(item);
+    }
+    return curList;
+  }
+
+  List<Widget> getPickerItems(){
+    List<Text> pickerList = [];
     var coinList = currenciesList.length;
     for (var i = 0; i < coinList; i++){
-      return DropdownMenuItem(
-        child: Text(currenciesList[i]),
-        value: currenciesList[i],
-      );
+      String cur = currenciesList[i];
+      var item = Text(cur);
+      pickerList.add(item);
     }
-
+   return pickerList;
   }
 
   @override
@@ -57,16 +71,13 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.lightBlue,
-            child: DropdownButton<String>(
-              value: selectedCur,
-              items: [
-                menuItems(),
-              ],
-              onChanged: (value){
-                setState(() {
-                  selectedCur = value;
-                });
-              },
+            child: CupertinoPicker(
+                backgroundColor: Colors.lightBlue, //match
+                itemExtent: 32,
+                onSelectedItemChanged: (selIndex) {
+                  print(selIndex);
+                },
+                children: getPickerItems()
             ),
           ),
         ],
@@ -74,3 +85,13 @@ class _PriceScreenState extends State<PriceScreen> {
     );
   }
 }
+
+//DropdownButton<String>(
+//value: selectedCur,
+//items: menuItems(),
+//onChanged: (value){
+//setState(() {
+//selectedCur = value;
+//});
+//},
+//),
